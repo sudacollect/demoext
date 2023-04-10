@@ -19,29 +19,11 @@ class DemoServiceProvider extends ServiceProvider
      */
     public function boot(Router $router,\App\Http\Kernel $kernel)
     {
-
-        $reflector = new ReflectionClass(get_class($this));
-        $whole_dir = dirname($reflector->getFileName());
-        
-        $path_dir = '';
-        // guess extension => vendor repository
-        $vendor_path = base_path('vendor');
-        $vendor_match = Str::startsWith($whole_dir, $vendor_path);
-        if($vendor_match)
+        $extensions = app('suda_extension')->installedExtensions();
+        if(isset($extensions['demoext']))
         {
-            $path_dir = $vendor_path;
+            $this->loadViewsFrom($extensions['demoext']['path'].'/resources/views', 'view_extension_demo');    
         }
-        
-        // guess extension => custom repository
-        $root_path = base_path();
-        $root_match = Str::startsWith($whole_dir, $root_path);
-        if($root_match)
-        {
-            $path_dir = $root_path;
-        }
-        
-        $this->loadViewsFrom($path_dir.'/demoext/resources/views', 'view_extension_demo');
-
     }
 
     /**
